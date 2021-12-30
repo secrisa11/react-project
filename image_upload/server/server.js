@@ -1,6 +1,15 @@
 const express = require("express");
 const multer = require("multer");
-const upload = multer({ dest: "uploads" });
+const { v4: uuid } = require("uuid");
+const mime = require("mime-types");
+
+const storage = multer.diskStorage({
+  destination: (req, file, callback) => callback(null, "./uploads"),
+  filename: (req, file, callback) =>
+    callback(null, `${uuid()}.${mime.extension(file.mimetype)}`),
+});
+
+const upload = multer({ storage });
 
 const app = express();
 const PORT = 5000;

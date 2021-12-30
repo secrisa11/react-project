@@ -9,7 +9,15 @@ const storage = multer.diskStorage({
     callback(null, `${uuid()}.${mime.extension(file.mimetype)}`),
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  fileFilter: (req, file, callback) => {
+    if (["image/png", "image/jpeg"].includes(file.mimetype))
+      callback(null, true);
+    else callback(new Error("Invalid file type"), false);
+  },
+  limits: { fileSize: 1024 * 1024 * 5 },
+});
 
 const app = express();
 const PORT = 5000;

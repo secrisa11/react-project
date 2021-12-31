@@ -48,14 +48,11 @@ userRouter.patch("/login", async (req, res) => {
 
 userRouter.patch("/logout", async (req, res) => {
   try {
-    const { sessionid } = req.headers;
-    if (!mongoose.isValidObjectId(sessionid))
-      throw new Error("Invalid sessionid");
-    const user = await User.findOne({ "sessions._id": sessionid });
-    if (!user) throw new Error("Invalid sessionid");
+    console.log(req.user);
+    if (!req.user) throw new Error("Invalid sessionid");
     await User.updateOne(
-      { _id: user.id },
-      { $pull: { sessions: { _id: sessionid } } }
+      { _id: req.user.id },
+      { $pull: { sessions: { _id: req.headers.sessionid } } }
     );
     res.json({ message: "user is logged out." });
   } catch (err) {

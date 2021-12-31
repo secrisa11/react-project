@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const multer = require("multer");
 const { v4: uuid } = require("uuid");
@@ -24,9 +25,7 @@ const app = express();
 const PORT = 5000;
 
 mongoose
-  .connect(
-    "mongodb+srv://admin:FrZVXyUd5qGAx3ds@cluster0.ygatk.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-  )
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("MongoDB Connected.");
     app.use("/uploads", express.static("uploads"));

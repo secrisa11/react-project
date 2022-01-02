@@ -18,12 +18,18 @@ export const ImageProvider = (prop) => {
   }, []);
   useEffect(() => {
     if (me) {
-      axios
-        .get("/users/me/images")
-        .then((result) => setMyImages(result.data))
-        .catch((err) => console.error(err));
+      setTimeout(() => {
+        axios
+          .get("/users/me/images")
+          .then((result) => setMyImages(result.data))
+          .catch((err) => console.error(err));
+      }, 0);
+    } else {
+      setMyImages([]);
+      setIsPublic(true);
     }
   }, [me]);
+
   return (
     <ImageContext.Provider
       value={{

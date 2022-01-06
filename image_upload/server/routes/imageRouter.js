@@ -8,7 +8,7 @@ const mongoose = require("mongoose");
 
 const fileUnlink = promisify(fs.unlink);
 
-imageRouter.post("/", upload.array("image", 20), async (req, res) => {
+imageRouter.post("/", upload.array("image", 30), async (req, res) => {
   try {
     if (!req.user) throw new Error("권한이 없습니다.");
     const images = await Promise.all(
@@ -47,7 +47,7 @@ imageRouter.get("/", async (req, res) => {
         : { public: true }
     )
       .sort({ _id: -1 })
-      .limit(20);
+      .limit(30);
     res.json(images);
   } catch (err) {
     console.log(err);

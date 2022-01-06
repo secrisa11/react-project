@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { ImageContext } from "../context/ImageContext";
 import { AuthContext } from "../context/AuthContext";
@@ -12,13 +12,32 @@ const ImagePage = () => {
   const { images, setImages, setMyImages } = useContext(ImageContext);
   const [me] = useContext(AuthContext);
   const [hasLiked, setHasLiked] = useState(false);
-  const image = images.find((image) => image._id === imageId);
+  const [image, setImage] = useState();
+  const [error, setError] = useState(false);
+  const imageRef = useRef();
+
+  useEffect(() => {
+    imageRef.current = images.find((image) => image._id === imageId);
+  }, [images, imageId]);
+
+  useEffect(() => {
+    if (imageRef.current) setImage(imageRef.current);
+    else
+      axios
+        .get(`/images/${imageId}`)
+        .then(({ data }) => setImage(data))
+        .catch((err) => {
+          setError(true);
+          toast.error(err.response.data.message);
+        });
+  }, [imageId]);
 
   useEffect(() => {
     if (me && image && image.likes.includes(me.userId)) setHasLiked(true);
   }, [me, image]);
 
-  if (!image) return <h3>Loading...</h3>;
+  if (error) return <h3>Error...</h3>;
+  else if (!image) return <h3>Loading...</h3>;
 
   const updateImage = (images, image) =>
     [...images.filter((image) => image._id !== imageId), image].sort(
